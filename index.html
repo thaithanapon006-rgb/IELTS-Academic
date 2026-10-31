@@ -94,6 +94,7 @@ input.fill{max-width:320px}
 .ent{padding:10px 0;border-bottom:1px dashed var(--line);font-size:15px}.ent small{color:var(--mute)}
 .bar i b{left:0}
 .acct{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;padding:14px 20px}.acct .act{margin:0}.acct button{padding:8px 16px;font-size:14px;margin:0}.acct p{flex-basis:100%;margin:0}
+.o.col{flex-direction:column}.o.col span{border-radius:16px;text-align:left}.hl{background:#FAF9FF;border:1px solid var(--line);border-radius:16px;padding:10px 14px;margin:8px 0;font-size:15px}.hl div{padding:2px 0}.hl b{color:var(--pur);display:inline-block;min-width:36px}
 </style>
 </head>
 <body>
@@ -139,6 +140,20 @@ input.fill{max-width:320px}
 <li>คำตอบต้องดึงมาจากบทอ่าน และสะกดให้ถูก</li>
 <li>เติมแล้วอ่านประโยคใหม่ว่าไวยากรณ์ลงตัว เช่น ช่องนั้นต้องเป็นนามหรือกริยา</li>
 <li>ข้อกลุ่มนี้ส่วนใหญ่เรียงตามลำดับในบทอ่าน ช่วยให้หาเร็วขึ้น</li></ul></details>
+<details><summary>🧭 จับคู่หัวข้อ (Matching headings)</summary><ol>
+<li>อ่านรายการหัวข้อก่อน ขีดคำสำคัญของแต่ละหัวข้อ</li>
+<li>อ่านประโยคแรกและประโยคสุดท้ายของย่อหน้า เพื่อหาใจความหลัก (main idea) ไม่ใช่รายละเอียด</li>
+<li><b>ระวังตัวหลอก:</b> หัวข้อที่เกี่ยวกับเรื่องในย่อหน้า แต่ไม่ใช่ใจความหลัก หรือหัวข้อที่พูดถึงสิ่งที่บทอ่านไม่ได้พูดเลย</li>
+<li>มักมีหัวข้อเกินมา 2–3 ข้อ และหัวข้อหนึ่งใช้ได้ครั้งเดียว ตัดข้อที่มั่นใจออกก่อน ตัวเลือกจะน้อยลง</li></ol></details>
+<details><summary>🗣️ Yes / No / Not Given</summary>
+<p>คล้าย T/F/NG แต่ถามถึง <b>ความเห็นของผู้เขียน</b> ไม่ใช่ข้อเท็จจริง</p>
+<ul><li><b>YES</b> ผู้เขียนเห็นด้วยกับข้อความ · <b>NO</b> ผู้เขียนเห็นขัดกับข้อความ · <b>NOT GIVEN</b> ไม่รู้ว่าผู้เขียนคิดอย่างไร</li>
+<li>หาประโยคที่ผู้เขียนแสดงความเห็น เช่น In my view, It would be a mistake…</li>
+<li>ความเห็นของคนอื่นที่ผู้เขียนยกมา (เช่น “supporters say…”) ไม่ใช่ความเห็นของผู้เขียนเอง</li></ul></details>
+<details><summary>🎯 เลือกตอบ (Multiple choice)</summary><ul>
+<li>อ่านคำถามก่อนตัวเลือก แล้วหาตำแหน่งในบทอ่าน (ข้อมักเรียงตามลำดับ)</li>
+<li>ตัวเลือกผิดมักเป็น: ถูกเพียงบางส่วน · ใช้คำจากบทอ่านแต่ความหมายผิด · พูดเกินกว่าที่บทอ่านบอก</li>
+<li>เลือกจากหลักฐานในบทอ่าน ทดสอบทีละตัวเลือกว่าบทอ่านรองรับหรือไม่ อย่าเลือกจากความรู้สึก</li></ul></details>
 <details><summary>🔎 จับคู่ย่อหน้า (Matching information)</summary><ul>
 <li>คำตอบไม่เรียงลำดับ และย่อหน้าเดียวใช้ตอบได้หลายข้อ</li>
 <li>มองหาความหมาย ไม่ใช่คำเดียวกับโจทย์ เพราะโจทย์เปลี่ยนคำเสมอ</li>
@@ -152,8 +167,9 @@ input.fill{max-width:320px}
 
 <div id="t_drill" style="display:none">
 <div class="card">
-<h2><span class="ic">🌿</span>บทฝึก 1: Rooftop Farming</h2>
-<p class="note">เวลาแนะนำ 20 นาที บทอ่านเขียนใหม่เพื่อการฝึกโดยเฉพาะ ชื่อเมือง Marlow และตัวเลขเป็นข้อมูลสมมติ ใช้ฝึกเทคนิคเท่านั้น</p>
+<div class="tabs" id="psel" style="margin:0 0 14px"></div>
+<h2><span class="ic" id="pic"></span><span id="ptitle"></span></h2>
+<p class="note" id="pnote"></p>
 <div class="tb" id="tb"><b id="tm">20:00</b><button id="ts" onclick="tgl()">▶ เริ่มจับเวลา</button></div>
 <div class="pass" id="pass"></div>
 </div>
@@ -185,15 +201,15 @@ window.FIREBASE_CONFIG={
 </script>
 <script>
 const $=id=>document.getElementById(id),E=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const RS=["ไม่ทัน paraphrase","ใช้ความรู้นอกบทอ่าน","ไม่รู้คำศัพท์","หมดเวลา/รีบ","สะกดหรือจำนวนคำผิด","เดา/ไม่แน่ใจ","ยังไม่ระบุ"],TY={tfng:"T/F/NG",fill:"เติมคำ",para:"จับคู่ย่อหน้า"};
+const RS=["ไม่ทัน paraphrase","ใช้ความรู้นอกบทอ่าน","ไม่รู้คำศัพท์","หมดเวลา/รีบ","สะกดหรือจำนวนคำผิด","เดา/ไม่แน่ใจ","ยังไม่ระบุ"],TY={tfng:"T/F/NG",ynng:"Y/N/NG",fill:"เติมคำ",para:"จับคู่ย่อหน้า",mh:"จับคู่หัวข้อ",mcq:"เลือกตอบ"};
 const TIP={"ไม่ทัน paraphrase":"ฝึกจดคู่คำที่ถูกเปลี่ยนคำให้ได้ 3 คู่ต่อบท","ใช้ความรู้นอกบทอ่าน":"ก่อนตอบ T/F/NG ให้ชี้ประโยคในบทอ่านที่ใช้ตัดสินให้ได้","ไม่รู้คำศัพท์":"จดคำที่ไม่รู้ แล้วท่องเฉพาะคำที่เจอซ้ำ","หมดเวลา/รีบ":"ฝึกกฎข้ามข้อที่ติดเกิน 1.5 นาที","สะกดหรือจำนวนคำผิด":"เช็กสะกดและจำนวนคำทุกข้อเติมคำก่อนไปข้อต่อไป","เดา/ไม่แน่ใจ":"พยายามหาตำแหน่งในบทอ่านให้เจอก่อนเดา"};
-const PN="Rooftop Farming";
-const PA=[["A","In many crowded cities, flat roofs make up a surprising share of unused space. Planners once regarded them only as places for air-conditioning units and water tanks. Over the past two decades, however, a growing number of building owners have turned their roofs into small farms, growing vegetables, herbs and even fruit high above the streets."],
+let PN="Rooftop Farming";
+let PA=[["A","In many crowded cities, flat roofs make up a surprising share of unused space. Planners once regarded them only as places for air-conditioning units and water tanks. Over the past two decades, however, a growing number of building owners have turned their roofs into small farms, growing vegetables, herbs and even fruit high above the streets."],
 ["B","Supporters point first to the effect on temperature. A planted roof absorbs less heat than bare concrete, and water evaporating from soil and leaves cools the air around it. In a pilot project in the city of Marlow, buildings with planted roofs needed noticeably less energy for cooling in summer than similar buildings nearby."],
 ["C","Food is the second argument. Produce grown on a roof travels only a few metres to reach customers, so little fuel is used for transport, and vegetables can be sold within hours of picking. Critics reply that rooftop farms are too small to feed a city. A typical roof in Marlow produces enough vegetables for about forty households, but the combined output of all the city’s rooftop farms meets less than two per cent of local demand."],
 ["D","The practical difficulties are considerable. Most older buildings were not designed to carry the weight of wet soil, so owners must pay for an engineer’s assessment before planting, and strengthening a roof can cost more than a farm will earn in several years. Wind is another problem: crops on high roofs dry out quickly, and delicate plants may be damaged."],
 ["E","Despite these obstacles, many of Marlow’s farmers say that profit is not their main aim. Surveys suggest that most were motivated by a wish to bring neighbours together, and several farms now run weekend classes for local schoolchildren. Some researchers believe that this social value, rather than vegetable production, may prove to be the most lasting benefit."]];
-const G=[
+let G=[
 {h:"Questions 1–4",i:"Do the statements agree with the information in the passage? Choose TRUE, FALSE or NOT GIVEN.",t:"tfng",o:["TRUE","FALSE","NOT GIVEN"],qs:[
 [1,"In the past, planners saw flat roofs as suitable for growing food.","FALSE","ย่อหน้า A บอกว่าเคย “regarded them only as” ที่วางเครื่องปรับอากาศและถังน้ำ ซึ่งขัดกับข้อความ จึงเป็น FALSE (ไม่ใช่ NOT GIVEN เพราะบทอ่านพูดเรื่องนี้ตรง ๆ) คำชี้ขาดคือ only"],
 [2,"Buildings with planted roofs in Marlow used less energy for cooling than similar buildings nearby.","TRUE","ย่อหน้า B: needed noticeably less energy for cooling = used less energy for cooling (paraphrase) และเทียบกับอาคารใกล้เคียงเหมือนกัน จึง TRUE"],
@@ -207,8 +223,63 @@ const G=[
 [8,"an example of how rooftop farms help young people","E","ย่อหน้า E: weekend classes for local schoolchildren = กิจกรรมที่ช่วยเด็ก ๆ (schoolchildren ↔ young people)"],
 [9,"a reason why some people doubt that rooftop farms can supply a city’s food","C","ย่อหน้า C: Critics reply … too small to feed a city = เหตุผลของคนที่สงสัย"],
 [10,"an explanation of why a planted roof stays cooler than a bare one","B","ย่อหน้า B: absorbs less heat than bare concrete และการระเหยของน้ำทำให้อากาศเย็นลง = คำอธิบายว่าทำไมจึงเย็นกว่า"]]}];
-$("pass").innerHTML=PA.map(p=>`<p><b>${p[0]}</b>${p[1]}</p>`).join("");
-$("qs").innerHTML=G.map(g=>`<div class="qg"><h3>${g.h}</h3><p class="note">${g.i}</p>`+g.qs.map(q=>`<div class="q"><p><b>${q[0]}.</b> ${q[1]}</p>${g.t=="fill"?`<input type="text" class="fill" name="a${q[0]}" autocomplete="off" spellcheck="false" placeholder="พิมพ์คำตอบ" aria-label="คำตอบข้อ ${q[0]}">`:`<div class="o">${g.o.map(v=>`<label><input type="radio" name="a${q[0]}" value="${v}"><span>${v}</span></label>`).join("")}</div>`}<div class="fb" id="f${q[0]}"></div></div>`).join("")+`</div>`).join("");
+const PA2=[["A","For most of human history, a clear night revealed thousands of stars. Today, children growing up in large cities may never see the Milky Way. The cause is artificial light that escapes upwards and scatters in the atmosphere, creating a glow that hides the stars. Astronomers call this sky glow, and it has increased steadily as cities have grown."],
+["B","Stars are not the only things affected. Many insects are drawn to lamps and circle them until they are exhausted, which reduces the food available to bats and birds. Sea turtle hatchlings, which use the brightness of the horizon over the sea to find the water, sometimes crawl towards street lights instead. Researchers also suspect that bright light at night can disturb human sleep, although the evidence is still being gathered."],
+["C","In recent years, a number of communities have tried to restore their night skies. The town of Hallow Bay replaced its old street lamps with fully shielded fittings that direct light downwards. Within three years, measurements showed that sky glow above the town had fallen by about a third, and residents reported that the streets felt no less safe."],
+["D","Not everyone is convinced. Some shop owners argue that bright signs attract customers after dark, and local councils worry about the cost of replacing thousands of lamps. Supporters reply that modern fittings use less electricity, so the investment is usually repaid within several years."],
+["E","Perhaps the most interesting result from Hallow Bay was not scientific. When the town organised a public star-watching evening, more than two thousand people came, many of them seeing the Milky Way for the first time. Organisers say that this experience has done more to win support for the project than any report."]];
+const G2=[
+{h:"Questions 1–5",i:"The passage has five paragraphs, A–E. Choose the correct heading for each paragraph from the list of headings below. There are more headings than paragraphs, so you will not use all of them.",t:"mh",o:["i","ii","iii","iv","v","vi","vii"],list:["The unexpected effect on wildlife","A town that changed its lights","A disappearing view of the stars","Doubts about the cost and the benefit","The rise of astronomy as a hobby","A public event that changed attitudes","New laws against outdoor lighting"],qs:[
+[1,"Paragraph A","iii","ย่อหน้า A เล่าว่าแสงบังดาวจนคนเมืองมองไม่เห็นทางช้างเผือก = a disappearing view ตัวหลอก v และ vii พูดถึงสิ่งที่บทอ่านไม่ได้พูดเลย"],
+[2,"Paragraph B","i","ย่อหน้า B พูดถึงแมลง นก และลูกเต่าทะเลที่ถูกแสงรบกวน ใจความหลักคือสัตว์ ส่วนเรื่องการนอนของคนเป็นแค่ประโยคท้ายที่ไม่ใช่ใจความหลัก"],
+[3,"Paragraph C","ii","ย่อหน้า C เล่าว่าเมือง Hallow Bay เปลี่ยนโคมไฟและผลที่ตามมา = a town that changed its lights"],
+[4,"Paragraph D","iv","ย่อหน้า D เป็นเสียงของคนที่ไม่เห็นด้วย (ร้านค้า สภา) และฝ่ายสนับสนุนที่ตอบเรื่องค่าใช้จ่าย = doubts about the cost and the benefit"],
+[5,"Paragraph E","vi","ย่อหน้า E เล่าถึงงานดูดาวสาธารณะที่ทำให้คนสนับสนุน = a public event that changed attitudes ระวัง v ที่ดูเกี่ยวกับดาราศาสตร์ แต่บทอ่านไม่ได้พูดถึงการเป็นงานอดิเรก"]]},
+{h:"Questions 6–8",i:"Do the statements agree with the information in the passage? Choose TRUE, FALSE or NOT GIVEN.",t:"tfng",o:["TRUE","FALSE","NOT GIVEN"],qs:[
+[6,"Sky glow above Hallow Bay fell by more than half after the new lamps were installed.","FALSE","ย่อหน้า C: fallen by about a third (ประมาณหนึ่งในสาม) ข้อความบอกว่ามากกว่าครึ่ง จึงขัดกัน = FALSE"],
+[7,"Supporters of the project say that the cost of new lamps is usually repaid.","TRUE","ย่อหน้า D: Supporters reply … the investment is usually repaid within several years = ตรงกับข้อความ"],
+[8,"It has been proved that night-time light causes sleep problems in humans.","FALSE","ย่อหน้า B: Researchers also suspect … the evidence is still being gathered = ยังเป็นข้อสงสัย ยังไม่ถูกพิสูจน์ ข้อความจึงขัดกับบทอ่าน คำชี้ขาดคือ proved เทียบกับ suspect"]]},
+{h:"Questions 9–10",i:"Complete the sentences. Write NO MORE THAN TWO WORDS from the passage for each answer.",t:"fill",qs:[
+[9,"Young sea turtles may crawl towards ______ instead of the sea.",["street lights"],"ย่อหน้า B: crawl towards street lights instead = ตอบ street lights (2 คำ)"],
+[10,"A public ______ in Hallow Bay attracted more than two thousand people.",["star-watching evening","star watching evening"],"ย่อหน้า E: a public star-watching evening คำที่มีขีดกลางนับเป็น 1 คำ จึงรวม 2 คำพอดี"]]}];
+const PA3=[["A","In 2012, the island nation of Corvia began an ambitious experiment. Until then, children had been taught entirely in the national language, while English was a separate subject for three hours a week. Under the new programme, half of all lessons in primary schools, including mathematics and science, would be taught in English."],
+["B","The first results were disappointing. Test scores in mathematics fell in the first two years, and many teachers admitted that they were not confident enough in English to explain difficult ideas. Parents were divided: some welcomed the chance for their children to learn a global language, while others feared that pupils would fall behind in the subjects themselves."],
+["C","The government responded by funding language courses for teachers and by introducing a transition year in which lessons were taught in both languages. By the sixth year of the programme, scores had recovered, and pupils’ English was far stronger than that of earlier groups. It would be a mistake, however, to conclude that the policy was a complete success. Pupils from poorer families improved least, probably because they had fewer chances to practise English outside school."],
+["D","In my view, the Corvian experience offers a lesson that other countries rarely consider: language policy cannot be separated from social inequality. A programme that benefits confident, well-resourced pupils while leaving others behind may raise average scores yet still widen the gap between rich and poor."],
+["E","Nevertheless, the programme’s supporters make a fair point. Teaching only in the national language did not guarantee equality either, since richer families could always pay for private English lessons. The real question may be not whether to teach in two languages, but how to give every child the support needed to benefit."]];
+const G3=[
+{h:"Questions 1–4",i:"Choose the correct letter, A, B, C or D.",t:"mcq",qs:[
+[1,"Before 2012, how was English taught in Corvian primary schools?","B","ย่อหน้า A: a separate subject for three hours a week = B ส่วน C คือสิ่งที่เกิดขึ้นหลังเริ่มโครงการใหม่ ไม่ใช่ก่อนปี 2012",["Only in private schools.","As a separate subject for a few hours each week.","As the language of mathematics lessons.","It was not taught in primary schools."]],
+[2,"What problem did many teachers report in the early years?","B","ย่อหน้า B: not confident enough in English to explain difficult ideas = B ตัวเลือก D เป็นตัวหลอก เพราะพ่อแม่แบ่งเป็นสองฝ่าย ไม่ใช่ทุกคนต้องการให้สอนด้วยภาษาประจำชาติอย่างเดียว (พูดเกินบทอ่าน)",["Pupils refused to attend English lessons.","They did not feel confident enough to explain difficult ideas in English.","There were not enough English textbooks.","Parents wanted all lessons in the national language."]],
+[3,"What does the writer say about the sixth year of the programme?","B","ย่อหน้า C: scores had recovered และ English far stronger = B ส่วน C ผิดเพราะนักเรียนครอบครัวยากจนพัฒนาน้อยที่สุด (ถูกบางส่วนแต่เกินจริง)",["English results were no better than earlier groups.","Mathematics scores had recovered and pupils’ English was stronger.","All groups of pupils had benefited equally.","The transition year had been removed."]],
+[4,"According to the writer, why did poorer pupils improve least?","B","ย่อหน้า C: probably because they had fewer chances to practise English outside school = B ตัวเลือกอื่นไม่มีในบทอ่านเลย",["Their teachers were less experienced.","They had fewer chances to practise English outside school.","They disliked learning in English.","They joined the programme later than other pupils."]]]},
+{h:"Questions 5–7",i:"Do the following statements agree with the views of the writer? Choose YES, NO or NOT GIVEN.",t:"ynng",o:["YES","NO","NOT GIVEN"],qs:[
+[5,"Language policy should be considered together with social inequality.","YES","ย่อหน้า D: In my view … language policy cannot be separated from social inequality เป็นความเห็นผู้เขียนโดยตรง = YES"],
+[6,"The Corvian programme was a complete success.","NO","ย่อหน้า C: ผู้เขียนบอกว่า It would be a mistake … to conclude that the policy was a complete success ขัดกับข้อความ = NO"],
+[7,"Private English lessons should be banned in Corvia.","NOT GIVEN","ย่อหน้า E พูดถึงบทเรียนพิเศษของครอบครัวรวย แต่ผู้เขียนไม่ได้บอกว่าควรห้ามหรือไม่ จึง NOT GIVEN อย่าเดาความเห็นที่ไม่มีในบท"]]},
+{h:"Questions 8–10",i:"Which paragraph contains the following information? Choose the correct letter, A–E.",t:"para",o:["A","B","C","D","E"],qs:[
+[8,"a reference to a disagreement among parents","B","ย่อหน้า B: some welcomed … while others feared = พ่อแม่เห็นต่างกัน"],
+[9,"an example of an action taken by the government to solve a problem","C","ย่อหน้า C: funding language courses for teachers และ transition year = สิ่งที่รัฐทำเพื่อแก้ปัญหา"],
+[10,"an argument that the old system also failed to produce equality","E","ย่อหน้า E: teaching only in the national language did not guarantee equality either = ระบบเดิมก็ไม่ได้ทำให้เท่าเทียม"]]}];
+const PS=[
+{s:PN,ic:"🌿",ti:"บทฝึก 1: Rooftop Farming",nt:"ประเภทข้อ: T/F/NG · เติมคำ · จับคู่ย่อหน้า",pa:PA,g:G},
+{s:"Dark Skies",ic:"🌌",ti:"บทฝึก 2: Dark Skies",nt:"ประเภทข้อ: จับคู่หัวข้อ · T/F/NG · เติมคำ",pa:PA2,g:G2},
+{s:"Two Languages",ic:"🗣️",ti:"บทฝึก 3: Teaching in Two Languages",nt:"ประเภทข้อ: เลือกตอบ · Yes/No/Not Given · จับคู่ย่อหน้า",pa:PA3,g:G3}];
+let cur=0;
+function inp(g,q){const n=q[0];
+ if(g.t=="fill")return `<input type="text" class="fill" name="a${n}" autocomplete="off" spellcheck="false" placeholder="พิมพ์คำตอบ" aria-label="คำตอบข้อ ${n}">`;
+ if(g.t=="mcq")return `<div class="o col">${q[4].map((x,i)=>`<label><input type="radio" name="a${n}" value="${"ABCD"[i]}"><span><b>${"ABCD"[i]}</b> ${x}</span></label>`).join("")}</div>`;
+ return `<div class="o">${g.o.map(v=>`<label><input type="radio" name="a${n}" value="${v}"><span>${v}</span></label>`).join("")}</div>`}
+function render(){
+ const p=PS[cur];PA=p.pa;G=p.g;PN=p.s;
+ $("psel").innerHTML=PS.map((x,i)=>`<button class="tab${i==cur?" on":""}" onclick="pick(${i})">บทที่ ${i+1}</button>`).join("");
+ $("pic").textContent=p.ic;$("ptitle").textContent=p.ti;
+ $("pnote").textContent="เวลาแนะนำ 20 นาที · "+p.nt+" · บทอ่านเขียนใหม่เพื่อการฝึก ชื่อสถานที่และตัวเลขเป็นข้อมูลสมมติ ใช้ฝึกเทคนิคเท่านั้น";
+ $("pass").innerHTML=PA.map(x=>`<p><b>${x[0]}</b>${x[1]}</p>`).join("");
+ $("qs").innerHTML=G.map(g=>`<div class="qg"><h3>${g.h}</h3><p class="note">${g.i}</p>${g.list?`<div class="hl">${g.list.map((x,i)=>`<div><b>${g.o[i]}</b> ${x}</div>`).join("")}</div>`:""}`+g.qs.map(q=>`<div class="q"><p><b>${q[0]}.</b> ${q[1]}</p>${inp(g,q)}<div class="fb" id="f${q[0]}"></div></div>`).join("")+`</div>`).join("");
+}
+function pick(i){if(i===cur)return;cur=i;clearInterval(tmr);tmr=null;sec=1200;draw();$("ts").textContent="▶ เริ่มจับเวลา";W=[];saved=false;$("sum").innerHTML="";render();scrollTo({top:0,behavior:"smooth"})}
+render();
 
 let tmr=null,sec=1200,W=[],saved=false;
 const fmt=s=>(s<0?"+":"")+String(Math.floor(Math.abs(s)/60)).padStart(2,"0")+":"+String(Math.abs(s)%60).padStart(2,"0");
