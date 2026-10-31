@@ -95,6 +95,33 @@ input.fill{max-width:320px}
 .bar i b{left:0}
 .acct{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;padding:14px 20px}.acct .act{margin:0}.acct button{padding:8px 16px;font-size:14px;margin:0}.acct p{flex-basis:100%;margin:0}
 .o.col{flex-direction:column}.o.col span{border-radius:16px;text-align:left}.hl{background:#FAF9FF;border:1px solid var(--line);border-radius:16px;padding:10px 14px;margin:8px 0;font-size:15px}.hl div{padding:2px 0}.hl b{color:var(--pur);display:inline-block;min-width:36px}
+
+.lg{font-size:15px;font-weight:600;color:var(--mute);margin:18px 0 8px}
+.lc{display:flex;flex-wrap:wrap;gap:8px}
+.lc button{margin:0;box-shadow:none;background:#fff;color:var(--ink);border:2px solid var(--line);padding:8px 16px;font-size:15px}
+.lc button.rd{border-color:var(--pur);color:var(--pur)}
+.lc button.dn{background:#DDF7EC;border-color:#9BDCC2;color:#168A66}
+.lc button[disabled]{opacity:.45;cursor:default;border-style:dashed}
+.lbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.lbar button{margin:0;padding:8px 18px;font-size:14px}
+.ls{margin:22px 0 0}
+.ls h3{margin:0 0 8px}
+.tw{overflow-x:auto;margin:8px 0}
+.tw table{font-size:14.5px;min-width:480px}.tw td:first-child{font-weight:600}
+.tip{background:linear-gradient(135deg,#FFF6C9,#FFE3EF);border-radius:20px;padding:14px 18px;margin:14px 0;font-size:15.5px}
+.tip b.h{display:block;margin-bottom:4px}
+.ex{background:#FAF9FF;border:1px solid var(--line);border-radius:16px;padding:10px 14px;margin:8px 0;font-size:15.5px}
+.ex i{display:block;font-style:normal;color:var(--mute);font-size:14px}
+.ex em{font-style:normal;color:var(--pur);font-weight:600}
+button.sp{margin:0 6px 0 0;padding:0 8px;font-size:13px;box-shadow:none;background:var(--pur2);color:var(--pur);border-radius:999px;line-height:1.7}
+.ipa{font-family:"Segoe UI","Noto Sans","Lucida Sans Unicode",Arial,sans-serif;color:var(--pur);font-weight:500}
+.lq{margin:14px 0}.lq p{margin:0 0 8px;font-weight:500}
+.lq .o2{display:flex;flex-wrap:wrap;gap:8px}
+.lq .o2 button{margin:0;box-shadow:none;background:#fff;color:var(--ink);border:2px solid var(--line);padding:6px 16px;font-size:15px;font-weight:500}
+.lq .o2 button.ok2{background:#DDF7EC;border-color:var(--mint)}
+.lq .o2 button.no2{background:#FFF0F0;border-color:var(--red)}
+.lq .o2 button[disabled]{cursor:default}
+.ls ul,.ls ol{padding-left:22px;margin:6px 0}.ls li{font-size:15.5px}
 </style>
 </head>
 <body>
@@ -106,6 +133,7 @@ input.fill{max-width:320px}
 </div>
 <nav class="tabs">
 <button class="tab on" id="b_guide" onclick="tab('guide')">📚 คู่มือ</button>
+<button class="tab" id="b_learn" onclick="tab('learn')">🎓 บทเรียน</button>
 <button class="tab" id="b_drill" onclick="tab('drill')">✍️ ห้องซ้อม</button>
 <button class="tab" id="b_book" onclick="tab('book')">📒 สมุดผิดพลาด<i id="bn">0</i></button>
 <button class="tab" disabled>🖊️ เขียน (เร็วๆ นี้)</button>
@@ -163,6 +191,16 @@ input.fill{max-width:320px}
 <li>regarded them only as places for … ↔ saw them as suitable only for …</li>
 <li>less than two per cent ↔ more than two per cent (ทิศทางตรงข้าม จึงเป็น FALSE)</li></ul></details>
 </div>
+</div>
+
+<div id="t_learn" style="display:none">
+<div class="card" id="lhome">
+<h2><span class="ic">🎓</span>บทเรียนพื้นฐาน</h2>
+<p class="note">เรียนกฎ เทคนิคจำ และสถานการณ์ใช้จริง แล้วลองทำแบบฝึกสั้น ๆ ท้ายบท บทที่มีเครื่องหมาย ✓ คือเรียนจบแล้ว</p>
+<div class="pg"><b id="lpg" style="width:0%"></b></div><small class="note" id="lpt"></small>
+<div id="lmenu"></div>
+</div>
+<div class="card" id="lview" style="display:none"></div>
 </div>
 
 <div id="t_drill" style="display:none">
@@ -285,7 +323,7 @@ let tmr=null,sec=1200,W=[],saved=false;
 const fmt=s=>(s<0?"+":"")+String(Math.floor(Math.abs(s)/60)).padStart(2,"0")+":"+String(Math.abs(s)%60).padStart(2,"0");
 function draw(){$("tm").textContent=fmt(sec);$("tb").classList.toggle("late",sec<=180)}
 function tgl(){if(tmr){clearInterval(tmr);tmr=null;$("ts").textContent="▶ ต่อเวลา"}else{tmr=setInterval(()=>{sec--;draw()},1000);$("ts").textContent="⏸ หยุดชั่วคราว"}}
-function tab(n){["guide","drill","book"].forEach(k=>{$("t_"+k).style.display=k==n?"block":"none";$("b_"+k).classList.toggle("on",k==n)});if(n=="book")book();scrollTo({top:0})}
+function tab(n){["guide","learn","drill","book"].forEach(k=>{$("t_"+k).style.display=k==n?"block":"none";$("b_"+k).classList.toggle("on",k==n)});if(n=="book")book();scrollTo({top:0})}
 const S=(v,n)=>String(v==null?"":v).slice(0,n);
 const clean=e=>{e=e&&typeof e==="object"?e:{};const o={n:+e.n||0,ty:S(e.ty,10),y:S(e.y,60),a:S(e.a,60),w:S(e.w,40),d:S(e.d,20),p:S(e.p,40),s:+e.s||0,t:+e.t||0};o.id=S(e.id,60)||[o.d,o.p,o.n,o.y,o.a,o.w,o.s].join("|");return o};
 const union=(a,b)=>{const m=new Map();[...a,...b].forEach(e=>{e=clean(e);if(!m.has(e.id))m.set(e.id,e)});return[...m.values()].sort((x,y)=>x.t-y.t).slice(-500)};
@@ -328,6 +366,240 @@ function clr(){if(confirm("ลบข้อมูลในสมุดทั้�
 window.APP={load,saveLocal:save,book,union,clean};
 function sync(){if(window.cloud&&cloud.ready())cloud.pull()}
 book();
+</script>
+<script>
+(function(){
+const g=id=>document.getElementById(id);
+const KEY="ielts_learn1";
+const rd=()=>{try{const o=JSON.parse(localStorage.getItem(KEY)||"{}");return Array.isArray(o.done)?o:{done:[]}}catch(e){return{done:[]}}};
+const wr=o=>{try{localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}};
+window.say=w=>{try{const u=new SpeechSynthesisUtterance(w);u.lang="en-GB";u.rate=.85;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}};
+const T=(head,rows)=>`<div class="tw"><table>${head?"<tr>"+head.map(h=>`<th>${h}</th>`).join("")+"</tr>":""}${rows.map(r=>"<tr>"+r.map(c=>`<td>${c}</td>`).join("")+"</tr>").join("")}</table></div>`;
+const X=(en,th)=>`<div class="ex">${en}<i>${th}</i></div>`;
+const SP=w=>`<button class="sp" onclick="say('${w}')" aria-label="ฟังเสียง ${w}">🔊</button>`;
+const IP=s=>`<span class="ipa">${s}</span>`;
+const TIP=(h,b)=>`<div class="tip"><b class="h">💡 ${h}</b>${b}</div>`;
+
+const LS={};
+
+LS.tenses={ic:"⏳",t:"Tenses (12 กาล)",sub:"จำเป็นสูตร 3×4 แล้วเลือกใช้ให้ถูกกับสัญญาณเวลา",s:[
+["โครงสร้างหลัก: เวลา × ลักษณะ",`<p>ทุก tense คือการเลือก 2 อย่าง: <b>เวลา</b> (อดีต / ปัจจุบัน / อนาคต) กับ <b>ลักษณะ</b> (Simple / Continuous / Perfect / Perfect Continuous)</p>`+TIP("เทคนิคจำ","ลักษณะมีแค่ 4 โครง<ul><li>Simple = <b>V</b></li><li>Continuous = <b>be + V-ing</b></li><li>Perfect = <b>have + V3</b></li><li>Perfect Continuous = <b>have been + V-ing</b></li></ul>แล้วแค่เปลี่ยนตัวช่วยตามเวลา: have/has (ปัจจุบัน) → <b>had</b> (อดีต) → <b>will have</b> (อนาคต)")],
+["ตารางสรุป 12 tenses",T(["Tense","โครงสร้าง","ใช้เมื่อ","สัญญาณ"],[
+["Present Simple","V1 (s/es)","ความจริง นิสัย ตาราง","always, usually, every day"],
+["Present Continuous","am/is/are + V-ing","กำลังทำ หรือแผนที่ตกลงแล้ว","now, at the moment, these days"],
+["Present Perfect","have/has + V3","ผลยังโยงถึงตอนนี้ ประสบการณ์","already, yet, ever, since, for"],
+["Present Perfect Cont.","have/has been + V-ing","ทำต่อเนื่องมาจนถึงตอนนี้","for/since + ระยะเวลา, all day"],
+["Past Simple","V2","จบแล้วในอดีต ระบุเวลา","yesterday, ago, in 2020"],
+["Past Continuous","was/were + V-ing","กำลังทำ ณ เวลาหนึ่งในอดีต","while, at 8 p.m. yesterday"],
+["Past Perfect","had + V3","เกิดก่อนอีกเหตุการณ์ในอดีต","by the time, before, already"],
+["Past Perfect Cont.","had been + V-ing","ทำต่อเนื่องก่อนจุดหนึ่งในอดีต","for … before, since"],
+["Future Simple","will + V1","ตัดสินใจทันที คาดการณ์","tomorrow, probably, I think"],
+["Future Continuous","will be + V-ing","กำลังทำ ณ เวลาในอนาคต","this time tomorrow"],
+["Future Perfect","will have + V3","จะเสร็จก่อนเวลาในอนาคต","by 2030, by next week"],
+["Future Perfect Cont.","will have been + V-ing","จะทำมาครบระยะ ณ อนาคต","by …, for … (ระยะเวลา)"]])],
+["สถานการณ์: รอรถเมล์",`<p>เรื่องเดียวกัน เปลี่ยนแค่ลักษณะ</p>`+X("I <em>take</em> the bus every day.","Present Simple · นิสัยประจำ")+X("I <em>am waiting</em> for the bus now.","Present Continuous · กำลังรอ")+X("The bus <em>has just left</em>.","Present Perfect · เพิ่งไป ผลคือตอนนี้ไม่มีรถ")+X("I <em>have been waiting</em> for 20 minutes.","Present Perfect Continuous · รอมาตลอด 20 นาที")+X("When I arrived, the bus <em>left</em>.","Past Simple · ฉันถึงก่อน รถค่อยออก")+X("When I arrived, the bus <em>had left</em>.","Past Perfect · รถออกไปก่อนฉันถึง")],
+["คู่ที่สับสนบ่อย",`<ul><li><b>Past Simple vs Present Perfect:</b> มีเวลาที่จบแล้ว (yesterday, in 2019, ago) ใช้ Past Simple · ไม่ระบุเวลาแต่ผลยังอยู่ ใช้ Present Perfect</li><li><b>for vs since:</b> for + ช่วงเวลา (for 3 years) · since + จุดเริ่มต้น (since 2021)</li><li><b>Stative verbs</b> เช่น know, like, want, believe ไม่ใช้ -ing: I know (ไม่ใช่ I am knowing)</li></ul>`],
+["ใช้ในข้อสอบอ่าน",`<ul><li>tense บอกว่าเรื่องเกิดเมื่อไร ข้อ T/F/NG มักกลับ tense: <i>has risen</i> (เพิ่มขึ้นแล้ว) ≠ <i>is expected to rise</i> (คาดว่าจะเพิ่ม)</li><li>will / is likely to / is predicted to คือการคาดการณ์ ไม่ใช่ข้อเท็จจริงที่เกิดแล้ว</li></ul>`]
+],q:[
+["By the time we arrived, the film ___.",["started","had started","has started","was starting"],1,"เหตุการณ์ที่เกิดก่อนอีกเหตุการณ์ในอดีต (by the time we arrived) ใช้ Past Perfect"],
+["I ___ here since 2019.",["live","lived","have lived","am living"],2,"since + จุดเริ่มต้น ใช้ Present Perfect"],
+["At 8 p.m. last night, I ___ dinner.",["cooked","was cooking","have cooked","cook"],1,"กำลังทำ ณ เวลาหนึ่งในอดีต ใช้ Past Continuous"],
+["The sun ___ in the east.",["rises","is rising","rose","has risen"],0,"ความจริงทั่วไป ใช้ Present Simple"],
+["By 2030, the city ___ its goal.",["will reach","will have reached","reaches","is reaching"],1,"by + เวลาในอนาคต หมายถึงเสร็จก่อนเวลานั้น ใช้ Future Perfect"]]};
+
+LS.pos={ic:"🧩",t:"Parts of Speech (ชนิดของคำ)",sub:"รู้ชนิดคำ = เติมคำและแก้ประโยคได้เร็วขึ้น",s:[
+["8 ชนิดของคำ",T(["ชนิด","หน้าที่","ตัวอย่าง"],[
+["Noun นาม","ชื่อคน สิ่งของ ความคิด","decision, teacher, economy"],
+["Pronoun สรรพนาม","แทนนาม","she, them, which, itself"],
+["Verb กริยา","การกระทำ สภาวะ","decide, become, is"],
+["Adjective คุณศัพท์","ขยายนาม","economic, careful, essential"],
+["Adverb กริยาวิเศษณ์","ขยายกริยา adj. adv. หรือทั้งประโยค","quickly, very, however"],
+["Preposition บุพบท","บอกความสัมพันธ์ ตามด้วยนาม","in, on, despite, according to"],
+["Conjunction สันธาน","เชื่อมคำ/ประโยค","and, but, although"],
+["Interjection อุทาน","แสดงอารมณ์","wow, oh"]])],
+["เดาชนิดคำจากตำแหน่ง",`<ul><li>หลัง a / the / adj. หรือ this/my → มักเป็น <b>นาม</b></li><li>หลังประธาน หรือหลัง will/can/to → <b>กริยา</b></li><li>หน้านาม หรือหลัง be/become/seem → <b>คุณศัพท์</b></li><li>ขยายกริยา คุณศัพท์ หรือขึ้นต้นประโยค → <b>กริยาวิเศษณ์</b></li></ul>`],
+["เดาชนิดคำจากคำลงท้าย",T(["ชนิด","คำลงท้ายที่พบบ่อย"],[
+["Noun","-tion, -sion, -ment, -ness, -ity, -ance/-ence, -ism, -er/-or/-ist (คน)"],
+["Verb","-ize/-ise, -ify, -ate, -en (soften)"],
+["Adjective","-ous, -ful, -ive, -al, -able/-ible, -ic, -ent/-ant, -less"],
+["Adverb","-ly (ส่วนใหญ่) แต่ระวัง friendly, lovely เป็น adj."]])],
+["ตระกูลคำ (word family)",T(["Noun","Verb","Adjective","Adverb"],[
+["decision","decide","decisive","decisively"],
+["economy / economist","economize","economic / economical","economically"],
+["difference","differ","different","differently"],
+["success","succeed","successful","successfully"]])+TIP("เทคนิคจำ","จดคำใหม่เป็น <b>ตระกูล</b> ไม่ใช่คำเดี่ยว เจอ <i>decision</i> ให้จด decide / decisive ติดไปด้วย 1 คำได้ 4 รูป และใช้แก้ข้อ paraphrase ในบทอ่านได้ดี")],
+["ใช้ในข้อสอบอ่าน",`<p>ข้อเติมคำ ให้ดูช่องว่างก่อนว่าต้องเป็นชนิดคำอะไร เช่น หลัง <i>the</i> และก่อน <i>of</i> มักต้องเป็นนาม ช่วยจำกัดคำตอบในบทอ่านได้เร็ว</p>`]
+],q:[
+["The company made a quick ___.",["decide","decision","decisive","decisively"],1,"หลัง a quick (adj.) ต้องเป็นนาม จึงเป็น decision"],
+["She spoke ___ about the plan.",["enthusiasm","enthusiastic","enthusiastically","enthuse"],2,"ขยายกริยา spoke ต้องใช้ adverb"],
+["Careful research is ___ for success.",["essential","essence","essentially","essentials"],0,"หลัง is ต้องเป็นคุณศัพท์ที่บอกลักษณะ"],
+["คำไหนเป็นกริยา",["modernize","modernity","modern","modernly"],0,"-ize ลงท้ายกริยา · modernity เป็นนาม · modern เป็น adj. · modernly เป็น adv."]]};
+
+LS.verbs3={ic:"🔤",t:"กริยา 3 ช่อง พร้อมสถานการณ์",sub:"จัดเป็นกลุ่ม จำเป็นแพทเทิร์น ไม่ท่องทีละตัว",s:[
+["V1 V2 V3 ใช้เมื่อไร",`<ul><li><b>V1</b> (ช่อง 1): รูปเดิม ใช้ Present Simple, หลัง to/will/can</li><li><b>V2</b> (ช่อง 2): Past Simple เหตุการณ์จบแล้ว</li><li><b>V3</b> (ช่อง 3): ใช้กับ <b>have/has/had</b>, ประโยค <b>passive</b> (be + V3) และใช้เป็น adj. เช่น <i>a broken window</i></li></ul>`],
+["กลุ่ม A-A-A (เหมือนกันทั้ง 3 ช่อง)",T(["V1","V2","V3","สถานการณ์"],[
+["put","put","put","I <b>put</b> my keys here. / I have <b>put</b> them here."],
+["cut","cut","cut","She <b>cut</b> her hair yesterday."],
+["set","set","set","He has <b>set</b> the alarm."],
+["hit","hit","hit","The ball <b>hit</b> the window."],
+["let","let","let","They <b>let</b> us in."],
+["cost","cost","cost","It <b>cost</b> 500 baht."],
+["read /riːd/","read /red/","read /red/","เขียนเหมือนกัน แต่ V2/V3 ออกเสียงเป็น /red/"]])],
+["กลุ่ม A-B-A",T(["V1","V2","V3"],[["come","came","come"],["run","ran","run"],["become","became","become"]])],
+["กลุ่ม A-B-B (ช่อง 2 = ช่อง 3)",T(["แพทเทิร์น","V1 → V2 → V3"],[
+["-ought / -aught","buy → bought → bought · bring → brought → brought · think → thought → thought · catch → caught → caught · teach → taught → taught · fight → fought → fought"],
+["ตัดสระเป็นเสียงสั้น + t","keep → kept · sleep → slept · feel → felt · leave → left · meet → met · send → sent · spend → spent · build → built"],
+["-ld","sell → sold · tell → told · hold → held"],
+["อื่น ๆ","have → had · make → made · say → said · pay → paid · stand → stood · find → found · win → won · hear → heard · lead → led · sit → sat · get → got · lose → lost"]])+TIP("เทคนิคจำ","ท่องเป็นกลุ่มเสียงคล้องจอง: <b>bought–thought–brought–caught–taught</b> (ทุกตัวออกเสียง /ɔːt/) พูดซ้ำเป็นประโยค: <i>I thought I bought what she brought</i>")],
+["กลุ่ม A-B-C (ต่างกันทั้ง 3 ช่อง)",T(["แพทเทิร์น","V1 → V2 → V3"],[
+["V3 ลงท้าย -n","take → took → taken · give → gave → given · see → saw → seen · know → knew → known · grow → grew → grown · draw → drew → drawn · throw → threw → thrown · fly → flew → flown · show → showed → shown"],
+["V3 ลงท้าย -en","break → broke → broken · speak → spoke → spoken · choose → chose → chosen · steal → stole → stolen · wake → woke → woken · freeze → froze → frozen · eat → ate → eaten · fall → fell → fallen · forget → forgot → forgotten · hide → hid → hidden"],
+["-ive/-ide/-ite → o…en","drive → drove → driven · ride → rode → ridden · write → wrote → written · rise → rose → risen"],
+["i → a → u","begin → began → begun · drink → drank → drunk · sing → sang → sung · swim → swam → swum · sink → sank → sunk · ring → rang → rung"],
+["ไม่เข้าพวก","be → was/were → been · go → went → gone · do → did → done · wear → wore → worn · tear → tore → torn"]])+TIP("เทคนิคจำ","V3 ที่ลงท้าย <b>-n/-en</b> มีเยอะที่สุดในกลุ่ม A-B-C ถ้าเจอกริยาที่ไม่แน่ใจ ลองเดา <i>-en</i> ก่อน แล้วค่อยเช็กในพจนานุกรม")],
+["สถานการณ์ V2 หรือ V3?",`<p><b>ร้านกาแฟ (buy)</b></p>`+X("Yesterday I <em>bought</em> a coffee.","V2 · เรื่องจบ มีเวลาชัดเจน")+X("I <em>have bought</em> three coffees today.","V3 · ตามหลัง have")+X("The coffee <em>was bought</em> by Tom.","V3 · passive")+`<p><b>go ไปแล้ว หรือเคยไป</b></p>`+X("Tom isn't here. He <em>has gone</em> to the bank.","ไปแล้ว ยังไม่กลับ")+X("I <em>have been</em> to the bank twice.","เคยไปและกลับมาแล้ว")+`<p><b>โทรศัพท์หาย (lose)</b></p>`+X("I <em>lost</em> my phone on Monday.","V2 · เล่าเหตุการณ์")+X("I <em>have lost</em> my phone. Can you call it?","V3 · ตอนนี้ยังหาไม่เจอ")+X("I realized I <em>had lost</em> it before I got home.","V3 · เกิดก่อนอีกเหตุการณ์ในอดีต")+`<p><b>V3 เป็นคุณศัพท์:</b> a <i>broken</i> window · <i>frozen</i> food · a <i>written</i> test · the <i>lost</i> keys</p>`],
+["คู่ที่สับสน: lie / lay",T(["ความหมาย","V1","V2","V3"],[["นอนลง (ไม่มีกรรม)","lie","lay","lain"],["วางสิ่งของ (มีกรรม)","lay","laid","laid"],["โกหก","lie","lied","lied"]])]
+],q:[
+["She has already ___ the report. (write)",["wrote","written","writen","writing"],1,"ตามหลัง has ใช้ V3 = written"],
+["Yesterday I ___ a new phone. (buy)",["buyed","bought","buyt","boughten"],1,"มี yesterday ใช้ V2 = bought"],
+["Tom isn't here. He has ___ to Phuket.",["been","gone","went","go"],1,"has gone = ไปแล้วและยังไม่กลับ"],
+["The window was ___ by the storm. (break)",["broke","broken","breaked","breaking"],1,"passive = be + V3 = broken"],
+["They ___ the match last week. (win)",["won","win","wined","have won"],0,"last week ระบุเวลาที่จบแล้ว ใช้ V2 = won"]]};
+
+const WR=(w,ipa,th)=>[SP(w)+"<b>"+w+"</b>",IP(ipa),th];
+
+LS.ipa={ic:"🔊",t:"ฝึกอ่านโดยใช้ IPA",sub:"อ่านสัญลักษณ์เสียงให้ออก แล้วกด 🔊 ฟังเทียบ",s:[
+["ทำไมต้องรู้ IPA",`<p>IPA (International Phonetic Alphabet) คือสัญลักษณ์เสียงที่พจนานุกรมใช้ ช่วยให้ออกเสียงคำใหม่ได้เองโดยไม่ต้องเดา และช่วยฟัง Listening แม่นขึ้น บทนี้ใช้ IPA แบบอังกฤษ (British) ตามที่พจนานุกรม Cambridge และ Oxford แสดง</p><p class="note">ปุ่ม 🔊 ใช้เสียงสังเคราะห์ของเบราว์เซอร์ ความแม่นขึ้นกับอุปกรณ์ ใช้เป็นตัวช่วยเทียบเท่านั้น</p>`],
+["เครื่องหมายสำคัญ",T(["เครื่องหมาย","ความหมาย","ตัวอย่าง"],[
+["ː","เสียงยาว","/siː/ see"],
+["ˈ","เน้นเสียงหนักที่พยางค์ถัดไป","/ɪnˈvaɪrənmənt/"],
+["ˌ","เน้นรอง","/ˌiːkəˈnɒmɪk/"],
+["/ ... /","ครอบคำที่เป็นเสียง ไม่ใช่ตัวสะกด","/kæt/ = cat"]])],
+["สระเดี่ยว",T(["IPA","ตัวอย่าง","เทียบเสียงไทย"],[
+[IP("/iː/"),"see, key","อี ยาว"],[IP("/ɪ/"),"sit, ship","อิ สั้น ไม่ตึงเท่า อี"],[IP("/e/"),"bed, head","เอะ"],[IP("/æ/"),"cat, bad","แอะ"],
+[IP("/ʌ/"),"cup, love","อะ (ปากเปิดกลาง)"],[IP("/ɑː/"),"car, father","อา ยาว"],[IP("/ɒ/"),"hot, dog","ออ สั้น"],[IP("/ɔː/"),"door, law","ออ ยาว"],
+[IP("/ʊ/"),"book, put","อุ สั้น"],[IP("/uː/"),"food, blue","อู ยาว"],[IP("/ɜː/"),"bird, work","เออ ยาว"],[IP("/ə/"),"about, teacher","เออ เบามาก (schwa) พบบ่อยที่สุดในพยางค์ไม่เน้น"]])],
+["สระประสม",T(["IPA","ตัวอย่าง","เทียบเสียงไทย"],[
+[IP("/eɪ/"),"day, make","เอ-อิ"],[IP("/aɪ/"),"my, time","ไอ"],[IP("/ɔɪ/"),"boy, coin","ออย"],[IP("/əʊ/"),"go, home","โอ"],[IP("/aʊ/"),"now, house","ใอ-อู / เอา"],[IP("/ɪə/"),"here, idea","เอีย"],[IP("/eə/"),"hair, care","แอ"],[IP("/ʊə/"),"tour, pure","อัว"]])],
+["พยัญชนะที่คนไทยพลาดบ่อย",T(["IPA","ตัวอย่าง","วิธีออกเสียง"],[
+[IP("/θ/"),"think, three","ลิ้นแตะฟันบน ไม่มีเสียงในลำคอ (ไม่ใช่ ท/ส)"],[IP("/ð/"),"this, they","ตำแหน่งเดียวกับ /θ/ แต่มีเสียงสั่นในลำคอ"],
+[IP("/ʃ/"),"ship, nation","ชฺ เสียงลมยาว"],[IP("/ʒ/"),"vision, measure","เหมือน /ʃ/ แต่มีเสียง"],[IP("/tʃ/"),"chair, much","ช"],[IP("/dʒ/"),"job, age","จ แบบมีเสียง"],
+[IP("/ŋ/"),"sing, long","ง ท้ายคำ"],[IP("/v/"),"very, love","ฟันบนแตะริมฝีปากล่าง มีเสียง (ไม่ใช่ ว)"],[IP("/z/"),"zoo, rose","ซ แบบมีเสียงสั่น"],
+[IP("/r/"),"red, run","ม้วนลิ้นเข้า ไม่แตะเพดาน"],[IP("/j/"),"yes, you","<b>j ใน IPA คือเสียง ย</b> ไม่ใช่ จ"]])+TIP("เทคนิคจำ","IPA ที่หน้าตาเหมือนตัวอักษรอังกฤษส่วนใหญ่ออกเสียงตามที่คุ้นเคย ให้ท่องเฉพาะตัวแปลก ๆ ประมาณ 10 ตัว: <b>θ ð ʃ ʒ ŋ ə ɪ ʊ æ ɜː</b>")],
+["พยางค์ท้ายคำ: ระวังเสียงที่หายไป",`<p>คนไทยมักตัดเสียงท้ายคำ แต่ในภาษาอังกฤษเสียงท้ายสำคัญต่อความหมาย เช่น /s/ /z/ /t/ /d/ /l/</p><ul><li>class /klɑːs/ ไม่ใช่ "คลาส" ท้ายต้องมีเสียง s</li><li>worked /wɜːkt/ · played /pleɪd/ ท้าย -ed ออกเสียงเป็น /t/ หรือ /d/</li><li>plurals: cats /kæts/ · dogs /dɒɡz/</li></ul>`],
+["ฝึกอ่าน: คำศัพท์ IELTS",T(["คำ (กด 🔊)","IPA","หมายเหตุ"],[
+WR("environment","/ɪnˈvaɪrənmənt/","เน้นพยางค์ 2"),
+WR("significant","/sɪɡˈnɪfɪkənt/","เน้นพยางค์ 2"),
+WR("technology","/tekˈnɒlədʒi/","เน้นพยางค์ 2"),
+WR("society","/səˈsaɪəti/","เน้นพยางค์ 2"),
+WR("approach","/əˈprəʊtʃ/","เน้นพยางค์ 2"),
+WR("analysis","/əˈnæləsɪs/","เน้นพยางค์ 2"),
+WR("evidence","/ˈevɪdəns/","เน้นพยางค์ 1"),
+WR("aspect","/ˈæspekt/","เน้นพยางค์ 1"),
+WR("vocabulary","/vəˈkæbjələri/","เน้นพยางค์ 2"),
+WR("comfortable","/ˈkʌmftəbl/","พยางค์กลางหายไป"),
+WR("vegetable","/ˈvedʒtəbl/","พยางค์กลางหายไป"),
+WR("Wednesday","/ˈwenzdeɪ/","d ไม่ออกเสียง")])],
+["น้ำหนักเสียงเปลี่ยนตามชนิดคำ",T(["คำ","นาม (เน้นพยางค์ 1)","กริยา (เน้นพยางค์ 2)"],[
+["increase","/ˈɪŋkriːs/","/ɪnˈkriːs/"],["record","/ˈrekɔːd/","/rɪˈkɔːd/"],["present","/ˈprezənt/","/prɪˈzent/"],["research","/ˈriːsɜːtʃ/","/rɪˈsɜːtʃ/ (ใช้นามได้ทั้งสองแบบ)"]])+TIP("เทคนิคจำ","คำ 2 พยางค์ที่ใช้ได้ทั้งนามและกริยา: <b>นามเน้นหน้า กริยาเน้นหลัง</b> พบบ่อยในบทอ่านวิชาการ")],
+["วิธีฝึกทุกวัน",`<ol><li>เลือก 5 คำใหม่จากบทอ่านที่เพิ่งทำ</li><li>เปิดพจนานุกรม ดู IPA และเสียงต้นฉบับ</li><li>อ่าน IPA ออกเสียงเอง แล้วกด 🔊 หรือฟังเสียงในพจนานุกรมเทียบ</li><li>จดคำพร้อม IPA และจุดเน้นเสียงในสมุดของคุณ</li></ol>`]
+],q:[
+["/ʃɪp/ คือคำไหน",["sheep","ship","chip","sip"],1,"/ʃ/ = sh และ /ɪ/ = อิ สั้น จึงเป็น ship (sheep คือ /ʃiːp/)"],
+["/θɪŋk/ คือคำไหน",["sink","think","thing","drink"],1,"/θ/ + /ɪ/ + /ŋk/ = think (thing คือ /θɪŋ/)"],
+["/dʒɒb/ คือคำไหน",["job","jab","chop","shop"],0,"/dʒ/ = จ แบบมีเสียง จึงเป็น job"],
+["รูปไหนเป็น \"กริยา\" increase (เพิ่มขึ้น)",["/ˈɪŋkriːs/","/ɪnˈkriːs/"],1,"กริยาเน้นพยางค์หลัง จึงเป็น /ɪnˈkriːs/"],
+["เครื่องหมาย ː หมายถึงอะไร",["เสียงยาว","เน้นหนัก","เสียงสูง","ไม่ออกเสียง"],0,"ː คือเสียงยาว เช่น /iː/ ใน see"]]};
+
+LS.conn={ic:"🔗",t:"Connectives (คำเชื่อม)",sub:"สัญญาณที่บอกทิศทางความคิดของผู้เขียน",s:[
+["จัดกลุ่มตามหน้าที่",T(["หน้าที่","คำเชื่อม"],[
+["เพิ่มข้อมูล","and, also, in addition, moreover, furthermore, besides"],
+["ขัดแย้ง","but, however, although, though, even though, while, whereas, despite / in spite of, nevertheless, on the other hand"],
+["เหตุ","because, since, as, because of, due to, owing to"],
+["ผล","so, therefore, thus, as a result, consequently, hence"],
+["ยกตัวอย่าง","for example, for instance, such as, namely"],
+["ลำดับ","firstly, then, after that, finally, meanwhile"],
+["สรุป","in conclusion, to sum up, overall, in short"],
+["เงื่อนไข / จุดประสงค์","if, unless, provided that · in order to, so that"]])],
+["กฎการใช้ที่ต้องรู้",`<ul><li><b>although / though / even though</b> + ประโยคเต็ม (S + V)</li><li><b>despite / in spite of</b> + นาม หรือ V-ing</li><li><b>because</b> + ประโยคเต็ม · <b>because of / due to</b> + นาม</li><li><b>however, therefore</b> เป็น adverb ใช้เชื่อมสองประโยคด้วย <b>; however,</b> หรือขึ้นประโยคใหม่ <b>. However,</b> ไม่ใช้ , อย่างเดียวคั่นสองประโยค</li><li><b>while / whereas</b> เทียบสองสิ่งที่ต่างกัน</li></ul>`+X("<em>Although</em> it was raining, we went out.","ตามด้วยประโยคเต็ม")+X("<em>Despite</em> the rain, we went out.","ตามด้วยนาม")+X("The test was hard. <em>However</em>, most students passed.","ขึ้นประโยคใหม่")],
+["สถานการณ์: ร้านกาแฟ",X("I like the café <em>because</em> the coffee is cheap.","เหตุ")+X("The coffee is cheap; <em>moreover</em>, the seats are comfortable.","เพิ่มข้อมูล")+X("<em>Although</em> it is crowded, I go there every day.","ขัดแย้ง")+X("It is crowded. <em>Therefore</em>, I arrive early.","ผล")],
+["ใช้ในข้อสอบอ่าน",`<ul><li><b>however / but / yet / nevertheless</b> บอกว่าข้อมูลหรือความเห็นกำลังพลิกทิศ มักเป็นจุดที่ข้อ T/F/NG และ Y/N/NG ใช้หลอก</li><li><b>for example / such as</b> ตามด้วยตัวอย่าง ไม่ใช่ใจความหลัก ในข้อ matching headings ไม่ควรเลือกจากส่วนนี้</li><li><b>therefore / as a result</b> ช่วยหาความสัมพันธ์เหตุ-ผลสำหรับข้อเติมคำ</li></ul>`+TIP("เทคนิคจำ","จำ 3 สัญญาณ: <b>เพิ่ม (+) · ขัด (↔) · เหตุผล (→)</b> ขีดวงกลมคำเชื่อมในบทอ่าน แล้วดูว่าหลังคำนั้นทิศทางเปลี่ยนไหม")]
+],q:[
+["___ the rain, we went out.",["Although","Despite","Because","However"],1,"despite + นาม (the rain)"],
+["___ she was tired, she kept working.",["Despite","In spite of","Although","Because of"],2,"ตามด้วยประโยคเต็ม ใช้ although"],
+["The test was hard. ___, most students passed.",["However","Although","Because","Despite"],0,"ขึ้นประโยคใหม่เพื่อขัดแย้ง ใช้ However"],
+["He missed the bus ___ the traffic.",["because","because of","although","so"],1,"ตามด้วยนาม the traffic ใช้ because of"],
+["ข้อใดบอกยกตัวอย่าง",["moreover","for instance","nevertheless","consequently"],1,"for instance = ยกตัวอย่าง"]]};
+
+LS.ifc={ic:"🔀",t:"If-clause (ประโยคเงื่อนไข)",sub:"จำเป็นกฎ \"ถอยเวลาหนึ่งก้าว\"",s:[
+["5 แบบหลัก",T(["แบบ","If-clause","Main clause","ใช้กับ"],[
+["Zero","Present Simple","Present Simple","ความจริง กฎธรรมชาติ"],
+["First","Present Simple","will + V1","อนาคตที่เป็นไปได้จริง"],
+["Second","Past Simple (be = were)","would + V1","สมมติปัจจุบัน/อนาคตที่ไม่น่าเป็นไปได้"],
+["Third","Past Perfect","would have + V3","สมมติอดีตที่เปลี่ยนไม่ได้แล้ว"],
+["Mixed","Past Perfect","would + V1","เหตุในอดีต ผลในปัจจุบัน"]])+TIP("เทคนิคจำ","<b>ถอยเวลาหนึ่งก้าว</b> ยิ่งไม่จริงยิ่งถอย<ul><li>จริง/เป็นไปได้ → ใช้ present</li><li>จินตนาการเรื่องปัจจุบัน → ถอยเป็น past</li><li>จินตนาการเรื่องอดีต → ถอยเป็น past perfect</li></ul>")],
+["สถานการณ์ใช้จริง",X("If you heat ice, it <em>melts</em>.","Zero · ความจริง")+X("If it rains tomorrow, I <em>will stay</em> home.","First · อาจเกิดขึ้นจริง")+X("If I <em>were</em> you, I <em>would take</em> the job.","Second · ฉันไม่ใช่เธอ จึงสมมติ")+X("If she <em>had left</em> earlier, she <em>would have caught</em> the train.","Third · เธอไม่ได้ออกเร็ว จึงตกรถไฟ")+X("If I <em>had studied</em> harder, I <em>would have</em> a better job now.","Mixed · อดีตส่งผลถึงตอนนี้")],
+["กฎที่ควรจำ",`<ul><li>ไม่ใช้ <b>will / would</b> ใน if-clause (ยกเว้นขอร้องอย่างสุภาพ เช่น <i>If you will wait…</i>)</li><li><b>unless</b> = if … not: <i>Unless you hurry, you will be late.</i></li><li><b>as long as / provided that</b> = ถ้าและเฉพาะเมื่อ</li><li>ใน Second ใช้ <b>were</b> กับทุกประธาน: If he <i>were</i> here…</li><li>ถ้า if-clause มาก่อน ใส่ , คั่น ถ้าตามหลังไม่ต้องใส่</li></ul>`],
+["แบบกลับประโยค (ดูเพิ่มในบท Inversion)",X("<em>Should</em> you need help, call me.","= If you should need help")+X("<em>Were</em> I you, I would go.","= If I were you")+X("<em>Had</em> I known, I would have told you.","= If I had known")],
+["ใช้ในข้อสอบอ่าน",`<p>บทอ่านวิชาการมักใช้ <i>would / could / might</i> พูดถึงสถานการณ์สมมติหรือผลที่เป็นไปได้ ข้อ T/F/NG อย่าตีความ <i>would</i> ว่าเป็นเรื่องที่เกิดขึ้นจริงแล้ว</p>`]
+],q:[
+["If I ___ you, I would study harder.",["am","was","were","be"],2,"Second conditional ใช้ were กับทุกประธาน"],
+["If she had left earlier, she ___ the train.",["would catch","will catch","would have caught","caught"],2,"Third conditional ใช้ would have + V3"],
+["Unless you hurry, you ___ late.",["will be","would be","are","were"],0,"unless = if … not เป็น First conditional"],
+["If you heat water to 100°C, it ___.",["will boil","boils","would boil","boiled"],1,"ความจริงทั่วไป ใช้ Zero conditional"],
+["___ I known, I would have told you.",["If","Had","Have","Did"],1,"กลับประโยค Third conditional ขึ้นด้วย Had"]]};
+
+const GROUPS=[
+["📐 ไวยากรณ์",[["tenses"],["pos"],["conn"],["ifc"],["Adjective"],["Reported Speech"],["Question Tag"],["Relative Clause"],["Passive Voice"],["Modal Verbs"],["Perfect Infinitives"],["Participles"],["Inversion"],["Subjunctive"],["Wish"]]],
+["🔤 คำศัพท์",[["verbs3"],["Prefix and Suffix"],["Phrasal Verbs"],["Idioms"],["Vocabulary"]]],
+["🗣️ ออกเสียงและสนทนา",[["ipa"],["Conversation"]]],
+["🛠️ ฝึกใช้",[["Grammar tips"],["Error Identification"],["Reading"],["Grammar"]]]];
+let cur=null;
+const total=Object.keys(LS).length;
+
+function menu(){
+ const d=rd().done;
+ let all=0;GROUPS.forEach(x=>all+=x[1].length);
+ g("lmenu").innerHTML=GROUPS.map(([h,items])=>`<div class="lg">${h}</div><div class="lc">`+items.map(([k])=>{
+  const L=LS[k];
+  if(!L)return `<button disabled title="เร็วๆ นี้">${k}</button>`;
+  const dn=d.includes(k);
+  return `<button class="${dn?"dn":"rd"}" onclick="learnOpen('${k}')">${dn?"✓ ":""}${L.ic} ${L.t.split(" (")[0]}</button>`;
+ }).join("")+`</div>`).join("");
+ const n=d.filter(k=>LS[k]).length;
+ g("lpg").style.width=(n/all*100)+"%";
+ g("lpt").textContent=`เรียนจบ ${n} จาก ${all} หัวข้อ (พร้อมใช้ ${total} · ที่เหลือกำลังทยอยเพิ่ม)`;
+}
+
+window.learnOpen=function(k){
+ const L=LS[k];if(!L)return;cur=k;
+ const done=rd().done.includes(k);
+ g("lhome").style.display="none";
+ const v=g("lview");v.style.display="block";
+ v.innerHTML=`<div class="lbar"><button class="g" onclick="learnBack()">← ทุกบทเรียน</button><button class="g" id="ldn" onclick="learnDone()">${done?"✓ เรียนจบแล้ว":"ทำเครื่องหมายว่าเรียนจบ"}</button></div>`
+ +`<h2 style="margin-top:14px"><span class="ic">${L.ic}</span>${L.t}</h2><p class="note">${L.sub}</p>`
+ +L.s.map(([h,b])=>`<div class="ls"><h3>${h}</h3>${b}</div>`).join("")
+ +`<div class="ls"><h3><span class="ic">🧪</span>ลองทำ</h3><p class="note">เลือกคำตอบ ระบบจะเฉลยทันที</p>`
+ +L.q.map((q,i)=>`<div class="lq" id="lq${i}"><p>${i+1}. ${q[0]}</p><div class="o2">${q[1].map((o,j)=>`<button onclick="learnAns(${i},${j})">${o}</button>`).join("")}</div><div class="fb" id="lf${i}"></div></div>`).join("")
+ +`<div id="lsc" class="sv" style="display:none"></div></div>`;
+ window._ls={a:0,r:0};
+ scrollTo({top:0,behavior:"smooth"});
+};
+window.learnAns=function(i,j){
+ const q=LS[cur].q[i],ok=j===q[2];
+ const box=g("lq"+i),bs=box.querySelectorAll("button");
+ bs.forEach((b,x)=>{b.disabled=true;if(x===q[2])b.classList.add("ok2");else if(x===j)b.classList.add("no2")});
+ const f=g("lf"+i);f.className="fb "+(ok?"ok":"no");f.textContent=(ok?"ถูกต้อง ":"ยังไม่ถูก ")+q[3];
+ _ls.a++;if(ok)_ls.r++;
+ if(_ls.a===LS[cur].q.length){const s=g("lsc");s.style.display="flex";s.innerHTML=`<span>ได้ ${_ls.r} / ${_ls.a} ข้อ</span><span class="pct">${_ls.r===_ls.a?"เยี่ยม 🎉":"ทบทวนอีกรอบ"}</span>`}
+};
+window.learnBack=function(){g("lview").style.display="none";g("lhome").style.display="block";menu();scrollTo({top:0})};
+window.learnDone=function(){
+ const o=rd();const i=o.done.indexOf(cur);
+ if(i<0)o.done.push(cur);else o.done.splice(i,1);
+ wr(o);g("ldn").textContent=i<0?"✓ เรียนจบแล้ว":"ทำเครื่องหมายว่าเรียนจบ";
+};
+menu();
+})();
 </script>
 <script type="module">
 const cfg=window.FIREBASE_CONFIG,$=id=>document.getElementById(id);
